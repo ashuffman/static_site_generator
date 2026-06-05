@@ -19,7 +19,7 @@ class TestTextNode(unittest.TestCase):
 
     def text_ineq_link(self):
         node = TextNode("This is a text node", TextType.CODE, "http://www.boot.dev")
-        node2 = TextNode("This is a text node", TextType.CODE, "http://www.boot.org")
+        node2 = TextNode("This is a text node", TextType.CODE)
         self.assertNotEqual(node, node2)
 
 if __name__ == "__main__":
