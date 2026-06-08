@@ -16,8 +16,9 @@ class HTMLNode():
     
     def props_to_html(self):
         output = ""
-        for k, v in self.props.items():
-            output += f' {k}="{v}"'
+        if self.props:
+            for k, v in self.props.items():
+                output += f' {k}="{v}"'
         return output
     
     def __repr__(self):
@@ -44,3 +45,21 @@ class LeafNode(HTMLNode):
         
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+    
+class ParentNode(HTMLNode):
+    def __init__(
+            self, tag : str, 
+            children : list, 
+            props : dict[str:str] = None):
+        super().__init__(tag, None, children, props)
+    def to_html(self):
+        if self.tag is None:
+            raise ValueError("Error: ParentNode objects must include a tag")
+        if self.children == None or len(self.children) == 0:
+            raise ValueError("Error: ParentNode objects must contain at least one child node")
+        html_output = f"<{self.tag}{self.props_to_html()}>"
+        for child in self.children:
+            html_output += child.to_html()
+        html_output += f"</{self.tag}>"
+        return html_output
+    
