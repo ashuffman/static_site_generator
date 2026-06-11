@@ -1,5 +1,5 @@
 import unittest
-from splitnodes import split_nodes_delimiter
+from splitnodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 
 class TestSplitNodes(unittest.TestCase):
@@ -65,3 +65,83 @@ class TestSplitNodes(unittest.TestCase):
             TextNode("this is just a text string", TextType.TEXT)
         ]
         self.assertEqual(split_nodes, expected_nodes)
+
+class TestExtractNodes(unittest.TestCase):
+    def test_single_img(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
+        test_list = extract_markdown_images(text)
+        expected_list = [
+            ("rick roll", "https://i.imgur.com/aKaOqIh.gif")
+        ]
+        self.assertCountEqual(test_list, expected_list)
+
+    def test_multi_img(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        test_list = extract_markdown_images(text)
+        expected_list = [
+            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+            ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertCountEqual(test_list, expected_list)
+
+    def test_single_link(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev)"
+        test_list = extract_markdown_links(text)
+        expected_list = [
+            ("to boot dev", "https://www.boot.dev")
+        ]
+        self.assertEqual(test_list, expected_list)
+
+    def test_multi_link(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        test_list = extract_markdown_links(text)
+        expected_list = [
+            ("to boot dev", "https://www.boot.dev"),
+            ("to youtube", "https://www.youtube.com/@bootdotdev")
+        ]
+        self.assertEqual(test_list, expected_list)
+
+    def test_no_img(self):
+        text = "There are no links in this text"
+        test_list = extract_markdown_images(text)
+        expected_list = []
+        self.assertEqual(test_list, expected_list)
+
+    def test_no_link(self):
+        text = "There are no links in this text"
+        test_list = extract_markdown_links(text)
+        expected_list = []
+        self.assertEqual(test_list, expected_list)
+
+    def test_empty_elements(self):
+        text = "An empty image ![](https://boot.dev/img.png) and an empty link [empty]()"
+        
+        self.assertEqual(
+            extract_markdown_images(text),
+            [("", "https://boot.dev/img.png")]
+        )
+        self.assertEqual(
+            extract_markdown_links(text),
+            [("empty", "")]
+        )
+
+    def test_empty_elements(self):
+        text = "An empty image ![](https://boot.dev/img.png) and an empty link [empty]()"
+        
+        self.assertEqual(
+            extract_markdown_images(text),
+            [("", "https://boot.dev/img.png")]
+        )
+        self.assertEqual(
+            extract_markdown_links(text),
+            [("empty", "")]
+        )
+
+    def test_broken_markdown(self):
+        text = "This is [broken link (https://boot.dev) and ![broken image]https://boot.dev)"
+        
+        self.assertEqual(extract_markdown_links(text), [])
+        self.assertEqual(extract_markdown_images(text), [])    
+
+
+    
