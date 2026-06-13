@@ -33,4 +33,89 @@ def extract_markdown_images(text: str) -> list[tuple]:
 def extract_markdown_links(text: str) -> list[tuple]:
     return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text) 
 
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+
+    for node in old_nodes:
+        text = node.text
+        images = extract_markdown_images(text)
+        # if node.text contains no images, append to the list as is
+        if len(images) == 0:
+            new_nodes.append(node)
+            continue
+        for image in images:
+            alt_text = image[0]
+            src_url = image[1]
+            img_md = f"![{alt_text}]({src_url})"
+            # if the text string doesn't start with the image markdown - extract the first substring into a TextNode and remove it from the string
+            if not text.startswith(img_md):
+                substr = text.split(img_md, 1)[0]
+                new_nodes.append(
+                    TextNode(
+                        substr,
+                        TextType.TEXT
+                    )
+                )
+                text = text.removeprefix(substr)
+            # add the new img TextNode to new_nodes, and remove it form the text string
+            new_nodes.append(
+                TextNode(
+                    alt_text, 
+                    TextType.IMAGE,
+                    src_url
+                )
+            )
+            text = text.removeprefix(img_md)
+        if len(text) > 0:
+            new_nodes.append(
+                TextNode(
+                    text, 
+                    TextType.TEXT
+                )
+                )
+    return new_nodes
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+
+    for node in old_nodes:
+        text = node.text
+        links = extract_markdown_links(text)
+        # if node.text contains no links, append to the list as is
+        if len(links) == 0:
+            new_nodes.append(node)
+            continue
+        for link in links:
+            link_text = link[0]
+            src_url = link[1]
+            link_md = f"[{link_text}]({src_url})"
+            # if the text string doesn't start with the link markdown - extract the first substring into a TextNode and remove it from the string
+            if not text.startswith(link_md):
+                substr = text.split(link_md, 1)[0]
+                new_nodes.append(
+                    TextNode(
+                        substr,
+                        TextType.TEXT
+                    )
+                )
+                text = text.removeprefix(substr)
+            # add the new link TextNode to new_nodes, and remove it form the text string
+            new_nodes.append(
+                TextNode(
+                    link_text, 
+                    TextType.LINK,
+                    src_url
+                )
+            )
+            text = text.removeprefix(link_md)
+        if len(text) > 0:
+            new_nodes.append(
+                TextNode(
+                    text, 
+                    TextType.TEXT
+                )
+                )
+    return new_nodes
+    
+    
 
