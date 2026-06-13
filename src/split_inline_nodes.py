@@ -6,6 +6,8 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     
     for node in old_nodes:
         delimiter_count = node.text.count(delimiter)
+        if node.text == "":
+            continue
         if node.text_type != TextType.TEXT or delimiter_count == 0:
             new_nodes.append(node)
         elif delimiter_count % 2 != 0:
@@ -38,6 +40,8 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
 
     for node in old_nodes:
         text = node.text
+        if text == "":
+            continue
         images = extract_markdown_images(text)
         # if node.text contains no images, append to the list as is
         if len(images) == 0:
@@ -80,6 +84,8 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 
     for node in old_nodes:
         text = node.text
+        if text == "":
+            continue
         links = extract_markdown_links(text)
         # if node.text contains no links, append to the list as is
         if len(links) == 0:
@@ -117,5 +123,11 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
                 )
     return new_nodes
     
-    
-
+def text_to_text_nodes(text: str) -> list[TextNode]:
+    text_node = TextNode(text, TextType.TEXT)
+    nodes = split_nodes_delimiter([text_node], "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
