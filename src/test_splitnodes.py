@@ -1,5 +1,5 @@
 import unittest
-from split_inline_nodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_text_nodes
+from split_inline_nodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_text_nodes, markdown_to_blocks
 from textnode import TextNode, TextType
 
 class TestSplitNodes(unittest.TestCase):
@@ -276,3 +276,42 @@ class TestTextToNodes(unittest.TestCase):
         nodes = text_to_text_nodes(text)
         expected_nodes = []
         self.assertListEqual(nodes, expected_nodes)
+
+class TestMarkdownToBlocks(unittest.TestCase):
+    def test_distinct_blocks(self):
+        md = """
+This is a paragraph with ***bolded** text.
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        expected_blocks = [
+            "This is a paragraph with ***bolded** text.",
+            "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+            "- This is a list\n- with items"
+        ]
+        self.assertListEqual(blocks, expected_blocks)
+
+    def test_extra_newlines(self):
+            md = """
+This is a paragraph with ***bolded** text.
+
+
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+            blocks = markdown_to_blocks(md)
+            expected_blocks = [
+                "This is a paragraph with ***bolded** text.",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items"
+            ]
+            self.assertListEqual(blocks, expected_blocks)
