@@ -31,31 +31,28 @@ def block_to_block_type(block: str) -> BlockType:
     # check for code block
     if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
         return BlockType.CODE
-    
-    # set up control flow for remaining BlockTypes
-    quote = True
-    ul = True
-    ol = True
 
     # check for multiline quote
-    for line in lines:
-        if not line.startswith(">"):
-            quote = False
-    if quote == True:
+    if block.strip().startswith(">"):
+        for line in lines:
+            if not line.startswith(">"):
+                return BlockType.PARAGRAPH
         return BlockType.QUOTE
             
     # check for unordered list
-    for line in lines:
-        if not line.startswith("- "):
-            ul = False
-    if ul == True:
+    if block.strip().startswith("- "):
+        for line in lines:
+            if not line.startswith("- "):
+                return BlockType.PARAGRAPH
         return BlockType.ULIST
 
     # check for ordered list
-    for line in lines:
-        if not re.match(r"[0-9]+\. ", line):
-            ol = False
-    if ol == True:
+    if block.strip().startswith("1. "):
+        i = 1
+        for line in lines:
+            if not line.startswith(f"{i}. "):
+                return BlockType.PARAGRAPH
+            i += 1
         return BlockType.OLIST
 
     # default to normal paragraph
