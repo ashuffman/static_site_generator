@@ -20,7 +20,6 @@ class BlockType(Enum):
     OLIST = "ordered list"
 
 def block_to_block_type(block: str) -> BlockType:
-# had this working, now it's broken again will have to figure it out and fix it
     # split the block into lines
     lines = block.strip().split("\n")
 

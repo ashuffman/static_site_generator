@@ -1,5 +1,5 @@
 import unittest
-from split_inline_nodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_text_nodes
+from split_inline_nodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_textnodes
 from split_blocks import markdown_to_blocks
 from textnode import TextNode, TextType
 
@@ -257,7 +257,7 @@ class TestSplitNodesInline(unittest.TestCase):
 class TestTextToNodes(unittest.TestCase):
     def test_all_text_types(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-        nodes = text_to_text_nodes(text)
+        nodes = text_to_textnodes(text)
         expected_nodes = [
             TextNode("This is ", TextType.TEXT),
             TextNode("text", TextType.BOLD),
@@ -274,7 +274,7 @@ class TestTextToNodes(unittest.TestCase):
 
     def test_empty_string(self):
         text = ""
-        nodes = text_to_text_nodes(text)
+        nodes = text_to_textnodes(text)
         expected_nodes = []
         self.assertListEqual(nodes, expected_nodes)
 
