@@ -22,7 +22,7 @@ def block_type_to_tag(block_type: BlockType) -> str:
     return tag_dict[block_type]
 
 def strip_markdown_code(block):
-    return block[4, -3]
+    return block[4: -3]
 
 def code_to_html_node(block):
     stripped_block = strip_markdown_code(block)
