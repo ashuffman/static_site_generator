@@ -219,3 +219,5 @@ __marimo__/
 
 # generated content
 public/
+public/index.html
+public/styles.css
