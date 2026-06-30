@@ -19,7 +19,7 @@ def copy_static_to_public(src_dir: str, dst_dir: str): # accepts path-like objec
     return
 
 def dir_list_to_paths(dir: str) -> list[str]:
-    # accepts a directory file path, return a list of the file paths of it's contents
+    # accepts a directory file path, return a list of the file paths of its contents
     dir_items = os.listdir(dir)
     dir_item_paths =[]
     for item in dir_items:
