@@ -72,3 +72,24 @@ the **same** even with inline stuff
         html = node.to_html()
         expected = "<div><h3>Zen and the Art of Motorcycle Maintenance</h3></div>"
         self.assertEqual(html, expected)
+
+class TestExtractHeader(unittest.TestCase):
+    def test_header_extraction(self):
+        md = """
+# A Quote From Lincoln
+
+> Four score and seven years ago, our forefathers brought forth upon this continent a new nation,
+> conceived in liberty and dedicated to the proposition that all men are created equal.
+"""
+        title = extract_title(md)
+        self.assertEqual("A Quote From Lincoln", title)
+
+    def test_headerless_extraction(self):
+        md = """
+## A Quote From Lincoln
+
+> Four score and seven years ago, our forefathers brought forth upon this continent a new nation,
+> conceived in liberty and dedicated to the proposition that all men are created equal.
+"""
+        with self.assertRaises(ValueError):
+            title = extract_title(md)
